@@ -14,9 +14,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class TerrainHUD implements Disposable {
-    private  Stage stage;
-    private  BitmapFont font;
-    private  Label seedLabel;
+    private final Stage stage;
+    private final BitmapFont font;
+    private final Label seedLabel;
     public TerrainHUD(SpriteBatch batch) {
         Viewport viewport = new ScreenViewport(); // 1px = 1 unit, resizes with window
         stage = new Stage(viewport, batch);

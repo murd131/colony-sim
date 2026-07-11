@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TerrainRenderer {
     private static final int TILE_SIZE = 4;
-
+    private final float OVERDRAW = 0.02f;
     private final SpriteBatch batch = new SpriteBatch();
     private final Terrain terrain;
     private final TextureAtlas atlas;
@@ -43,15 +43,15 @@ public class TerrainRenderer {
         float camTop    = camera.position.y + camera.viewportHeight / 2f * camera.zoom;
 
         int startX = Math.max(0, (int) (camLeft / TILE_SIZE) - (int) offset);
-        int endX   = Math.min(200, (int) (camRight / TILE_SIZE) + (int) offset * 2);
+        int endX   = Math.min(Terrain.WORLD_SIZE, (int) (camRight / TILE_SIZE) + (int) offset * 2);
         int startY = Math.max(0, (int) (camBottom / TILE_SIZE) - (int) offset);
-        int endY   = Math.min(200, (int) (camTop / TILE_SIZE) + (int) offset * 2);
+        int endY   = Math.min(Terrain.WORLD_SIZE, (int) (camTop / TILE_SIZE) + (int) offset * 2);
 
         for (int x = startX; x < endX; x++) {
             for (int y = startY; y < endY; y++) {
                 TextureRegion region = getRegion(terrain.get(x, y));
                 if (region != null) {
-                    batch.draw(region, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    batch.draw(region, x * TILE_SIZE - OVERDRAW, y * TILE_SIZE - OVERDRAW, TILE_SIZE + OVERDRAW*2, TILE_SIZE + OVERDRAW*2);
                 }
             }
         }

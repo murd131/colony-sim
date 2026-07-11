@@ -149,15 +149,27 @@ public class Perlin2D {
 
     public float dotGridGradient(int ix, int iy, float x, float y){
 
-        // Get gradient from int coordinates
+        // inline randomGradient, no Vector2D allocation
+        final int w = 32;
+        final int s = w / 2;
+        int a = ix;
+        int b = iy;
+        a *= 1284157433;
+        b ^= (a << s) | (a >>> (w - s));
+        b *= 1911520717;
+        a ^= (b << s) | (b >>> (w - s));
+        a *= 2048419325;
 
-        Vector2D gradient = randomGradient(ix, iy);
+        double unsignedA = Integer.toUnsignedLong(a);
+        float random = (float) (unsignedA * (2.0 * Math.PI / 4294967296.0));
 
-        // Compute the distance vector
+        float gradX = (float) Math.sin(random);
+        float gradY = (float) Math.cos(random);
 
-        Vector2D distanceVector = new Vector2D(x - (float)ix, y- (float)iy);
+        float dx = x - ix;
+        float dy = y - iy;
 
-        return gradient.dotProduct(distanceVector);
+        return gradX * dx + gradY * dy; // dot product, no objects
 
     }
 
