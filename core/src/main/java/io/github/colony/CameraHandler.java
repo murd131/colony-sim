@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class CameraHandler extends InputAdapter {
     private final OrthographicCamera camera;
     private final Viewport viewport;
+    private SelectionHandler selectionHandler;
 
     private final Vector3 lastMousePos = new Vector3();
     private boolean dragging = false;
@@ -22,9 +23,10 @@ public class CameraHandler extends InputAdapter {
     private float worldWidth = -1;
     private float worldHeight = -1;
 
-    public CameraHandler(OrthographicCamera camera, Viewport viewport) {
+    public CameraHandler(OrthographicCamera camera, Viewport viewport, SelectionHandler selectionHandler) {
         this.viewport = viewport;
         this.camera = (OrthographicCamera) viewport.getCamera();
+        this.selectionHandler = selectionHandler;
     }
     public void resize(int width, int height){
         viewport.update(width,height);
@@ -47,10 +49,15 @@ public class CameraHandler extends InputAdapter {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Gdx.app.log("CameraController", "touchDown button=" + button);
-        if (button == Input.Buttons.LEFT || button == Input.Buttons.MIDDLE) {
+        if (button == Input.Buttons.RIGHT || button == Input.Buttons.MIDDLE) {
             lastMousePos.set(screenX, screenY, 0);
             dragging = true;
             return true;
+        }
+        if (button == Input.Buttons.LEFT) {
+            selectionHandler.onClick(screenX, screenY);
+            Gdx.app.log("CameraController", "Selected cell:" +selectionHandler.getSelectedTile());
+
         }
         return false;
     }

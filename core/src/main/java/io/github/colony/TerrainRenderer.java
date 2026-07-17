@@ -2,6 +2,7 @@ package io.github.colony;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -13,10 +14,14 @@ public class TerrainRenderer {
     private final SpriteBatch batch = new SpriteBatch();
     private final Terrain terrain;
     private final TextureAtlas atlas;
+    private final Texture selection;
     private final TextureRegion[] tileTextures;
+    SelectionHandler selectionHandler;
 
-    public TerrainRenderer(Terrain terrain) {
+    public TerrainRenderer(Terrain terrain, SelectionHandler selectionHandler) {
         this.terrain = terrain;
+        this.selectionHandler = selectionHandler;
+        selection = new Texture(Gdx.files.internal("selection.png"));
         atlas = new TextureAtlas(Gdx.files.internal("atlas2/tiles.atlas"));
 
         tileTextures = new TextureRegion[Terrain.TileType.values().length]; // no "TextureRegion[]" prefix — reuse the field
@@ -27,6 +32,9 @@ public class TerrainRenderer {
         tileTextures[Terrain.TileType.GRASS.ordinal()] = atlas.findRegion("grass");
         tileTextures[Terrain.TileType.DIRT.ordinal()]  = atlas.findRegion("dirt");
         tileTextures[Terrain.TileType.DEEP_WATER.ordinal()]  = atlas.findRegion("deep_water");
+        tileTextures[Terrain.TileType.TROPIC.ordinal()]  = atlas.findRegion("tropics");
+        tileTextures[Terrain.TileType.SAVANNA.ordinal()]  = atlas.findRegion("brown_grass");
+
     }
 
     public void render(OrthographicCamera camera) {
@@ -55,6 +63,10 @@ public class TerrainRenderer {
                 }
             }
         }
+        if (selectionHandler.getSelectedTile() != null) {
+            batch.draw(selection, selectionHandler.getSelectedTile().x * TILE_SIZE, selectionHandler.getSelectedTile().y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
+
 
         batch.end();
     }
@@ -65,6 +77,8 @@ public class TerrainRenderer {
 
     public void dispose() {
         batch.dispose();
-        atlas.dispose(); // this disposes the underlying packed texture too — no separate Texture fields needed
+        atlas.dispose();
+        selection.dispose();
+    // this disposes the underlying packed texture too — no separate Texture fields needed
     }
 }

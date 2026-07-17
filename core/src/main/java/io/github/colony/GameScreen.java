@@ -14,21 +14,23 @@ public class GameScreen implements Screen {
     public CameraHandler cameraHandler;
     private Terrain terrain;
     private TerrainRenderer renderer;
-    private SpriteBatch hudBatch = new SpriteBatch();
+    private final SpriteBatch hudBatch = new SpriteBatch();
     private TerrainHUD HUD;
     OrthographicCamera camera = new OrthographicCamera();
     @Override
     public void show() {
         Viewport viewport = new ScreenViewport(camera);
         HUD = new TerrainHUD(hudBatch);
+        TilePicker tilePicker = new TilePicker(camera, 4);
+        SelectionHandler selectionHandler = new SelectionHandler(tilePicker, terrain);
+        cameraHandler = new CameraHandler(camera,viewport, selectionHandler);
+        cameraHandler.setWorldBounds(400*3, 400*3);
 
-        cameraHandler = new CameraHandler(camera,viewport);
-        cameraHandler.setWorldBounds(500*3, 500*3);
-        terrain = new Terrain(500);
+        terrain = new Terrain(400);
         int seed = 454933;
         terrain.generate(seed);
         Gdx.app.log("Screen", "show() called");
-        renderer = new TerrainRenderer(terrain);
+        renderer = new TerrainRenderer(terrain,selectionHandler);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cameraHandler);
         multiplexer.addProcessor(new InputHandler(terrain));
@@ -39,8 +41,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.app.log("Memory", "Java heap: " + (Gdx.app.getJavaHeap() / 1024 / 1024) + " MB");
-        Gdx.app.log("Memory", "Native heap: " + (Gdx.app.getNativeHeap() / 1024 / 1024) + " MB");
+        // Gdx.app.log("Memory", "Java heap: " + (Gdx.app.getJavaHeap() / 1024 / 1024) + " MB");
+        // Gdx.app.log("Memory", "Native heap: " + (Gdx.app.getNativeHeap() / 1024 / 1024) + " MB");
         renderer.render(camera);
         camera.update();
         HUD.update(terrain.get_seed());
