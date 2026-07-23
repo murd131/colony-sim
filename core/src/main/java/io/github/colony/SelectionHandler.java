@@ -24,4 +24,10 @@ public class SelectionHandler {
         return selectedTile;
 
     }
+    public  int getSelectedX(){
+        return selectedTile.x;
+    }
+    public  int getSelectedY(){
+        return selectedTile.y;
+    }
 }

@@ -11,14 +11,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class CameraHandler extends InputAdapter {
     private final OrthographicCamera camera;
     private final Viewport viewport;
-    private SelectionHandler selectionHandler;
+    private final SelectionHandler selectionHandler;
 
     private final Vector3 lastMousePos = new Vector3();
     private boolean dragging = false;
 
     private float minZoom = 0.01f;
     private float maxZoom = 10f;
-    private float zoomSpeed = 0.05f;
+    private final float zoomSpeed = 0.05f;
 
     private float worldWidth = -1;
     private float worldHeight = -1;

@@ -19,16 +19,17 @@ public class GameScreen implements Screen {
     OrthographicCamera camera = new OrthographicCamera();
     @Override
     public void show() {
-        Viewport viewport = new ScreenViewport(camera);
-        HUD = new TerrainHUD(hudBatch);
-        TilePicker tilePicker = new TilePicker(camera, 4);
-        SelectionHandler selectionHandler = new SelectionHandler(tilePicker, terrain);
-        cameraHandler = new CameraHandler(camera,viewport, selectionHandler);
-        cameraHandler.setWorldBounds(400*3, 400*3);
-
         terrain = new Terrain(400);
         int seed = 454933;
         terrain.generate(seed);
+
+        Viewport viewport = new ScreenViewport(camera);
+        TilePicker tilePicker = new TilePicker(camera, 4);
+        SelectionHandler selectionHandler = new SelectionHandler(tilePicker, terrain);
+        HUD = new TerrainHUD(hudBatch, terrain,selectionHandler);
+        cameraHandler = new CameraHandler(camera,viewport, selectionHandler);
+        cameraHandler.setWorldBounds(400*3, 400*3);
+
         Gdx.app.log("Screen", "show() called");
         renderer = new TerrainRenderer(terrain,selectionHandler);
         InputMultiplexer multiplexer = new InputMultiplexer();

@@ -1,8 +1,5 @@
 package io.github.colony;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -37,6 +34,37 @@ public class Terrain {
     public TileType get(int x, int y){
         return tileStats[x][y].type;
     }
+    public int getHeight(int x, int y){return tileStats[x][y].height;}
+    public String getName(int x, int y){
+        if(tileStats[x][y].type == TileType.WATER){
+            return "Water";
+        }
+        else if(tileStats[x][y].type == TileType.DEEP_WATER){
+            return "Ocean";
+        }
+        else if(tileStats[x][y].type == TileType.GRASS){
+            return "Grass Lands";
+        }
+        else if(tileStats[x][y].type == TileType.SAVANNA){
+            return "Savanna";
+        }
+        else if(tileStats[x][y].type == TileType.DIRT){
+            return "Thundra";
+        }
+        else if(tileStats[x][y].type == TileType.SAND){
+            return "Desert";
+        }
+        else if(tileStats[x][y].type == TileType.TROPIC){
+            return "Jungle";
+        }
+        else if(tileStats[x][y].type == TileType.SNOW){
+            return "Snow";
+        }
+        else if (tileStats[x][y].type == TileType.ROCK){
+            return "Rock";
+        }
+        return "Nothing";
+    }
     public void generate(int seed) {
         this.seed = seed;
 
@@ -45,13 +73,17 @@ public class Terrain {
                 tileStats[x][y] = new TileStat();
 
                 // 1. Continent shape: very low frequency, few octaves -> big coherent landmasses
-                float continent = perlin.fbm(x, y, 2, 0.5f, 2.0f, 0.006f, seed);
+                float continent = perlin.fbm(x, y, 1, 0.5f, 2.0f, 0.005f, seed);
+
+                // 2. Medium details:
+
+                float medium = perlin.fbm(x, y, 2, 1f, 2.0f, 0.03f, seed + 500);
 
                 // 2. Detail: big frequency, a lot of octaves
                 float detail = perlin.fbm(x, y, 4, 0.5f, 2.0f, 0.06f, seed + 1000);
 
                 // combine: continent dominates large-scale shape, detail perturbs it
-                float height = continent * 0.8f + detail * 0.2f;
+                float height = continent * 0.9f + medium * 0.7f +detail * 0.4f;
                 height = height / 0.5f;
 
                 tileStats[x][y].setHeight((int)(height * 1000));
@@ -72,12 +104,12 @@ public class Terrain {
         if (height < 0f)    return temperature < 0.85f ? TileType.WATER      : TileType.SNOW;
         if (temperature > 0.85f) return TileType.SNOW;
 
-        if (height < 0.08f && moisture < 0.3f && temperature < 0.2f) return TileType.SAND;
+        if (height > 0.0f && moisture < 0.3f && temperature < 0.2f) return TileType.SAND;
         if (height < 0.5f && moisture > 0f && temperature < 0.3f) return TileType.TROPIC;
         if (height < 0.5f  && temperature < 0.4f && moisture<-0.3f) return TileType.SAVANNA;
         if (height < 0.5f  && temperature < 0.7f) return TileType.GRASS;
-        if (height < 0.65f  || temperature > 0.8f) return TileType.DIRT;
-        if (height < 0.9f) return TileType.ROCK;
+        if (height < 0.6f  || temperature > 0.8f) return TileType.DIRT;
+        if (height < 0.7f) return TileType.ROCK;
         return TileType.SNOW;
     }
     private LinkedList<Integer> find_peaks(int riverNumber) {
@@ -115,7 +147,7 @@ public class Terrain {
         tileStats[x][y].setTemperature(temperatue);
         //Gdx.app.log("Terrain", "temperature: " + tileStats[x][y].temperature);
     }
-    private void generate_moisture(int x, int y, float height, Perlin2D perlin){
+    private void generate_humidity(int x, int y){
         // TODO
     }
     public void set_seed(int seed){

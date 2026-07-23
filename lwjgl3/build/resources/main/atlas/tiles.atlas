@@ -1,0 +1,15 @@
+tiles.png
+size:128,32
+repeat:none
+dirt
+bounds:74,2,16,16
+grass
+bounds:56,2,16,16
+rock
+bounds:2,2,16,16
+sand
+bounds:20,2,16,16
+snow
+bounds:38,2,16,16
+water
+bounds:92,2,16,16
